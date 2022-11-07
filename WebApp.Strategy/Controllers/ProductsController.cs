@@ -4,9 +4,11 @@ using BaseProject.Models;
 using WebApp.Strategy.Models;
 using WebApp.Strategy.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Strategy.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly IProductRepository _productRepository;
@@ -55,21 +57,20 @@ namespace WebApp.Strategy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,UserId,CreatedDate")] Product product)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                product.UserId = user.Id;
-                product.CreatedDate = DateTime.Now;
-                await _productRepository.Save(product);
-                return RedirectToAction(nameof(Index));
-            }
+
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            product.UserId = user.Id;
+            product.CreatedDate = DateTime.Now;
+            await _productRepository.Save(product);
+            return RedirectToAction(nameof(Index));
+
             return View(product);
         }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null )
+            if (id == null)
             {
                 return NotFound();
             }
@@ -119,7 +120,7 @@ namespace WebApp.Strategy.Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null )
+            if (id == null)
             {
                 return NotFound();
             }
@@ -138,7 +139,7 @@ namespace WebApp.Strategy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            
+
             var product = await _productRepository.GetById(id);
             if (product != null)
             {

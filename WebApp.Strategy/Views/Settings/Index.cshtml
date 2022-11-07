@@ -1,0 +1,13 @@
+﻿@using WebApp.Strategy.Models
+
+@{
+    ViewData["Title"] = "Index";
+}
+@model Settings
+
+<form asp-controller="Settings" asp-action="ChangeDatabase">
+
+    <select name="databaseType" asp-for="DatabaseType" asp-items="Html.GetEnumSelectList<EnumDatabaseType>()"></select>
+        <button type="submit">Submit</button>
+</form>
+
