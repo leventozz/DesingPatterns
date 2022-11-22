@@ -1,4 +1,6 @@
 using BaseProject.Models;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -10,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>  options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.User.RequireUniqueEmail = true).AddEntityFrameworkStores<AppIdentityDbContext>();
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 var app = builder.Build();
 
