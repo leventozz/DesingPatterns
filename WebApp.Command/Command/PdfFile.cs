@@ -34,13 +34,13 @@ namespace WebApp.Command.Command
             });
             sb.Append("</tr>");
 
-            _list.ForEach(p =>
+            _list.ForEach(x =>
             {
-                var values = type.GetProperties().Select(p => p.GetValue(p, null)).ToList();
+                var values = type.GetProperties().Select(p => p.GetValue(x, null)).ToList();
                 sb.Append("<tr>");
-                values.ForEach(p =>
+                values.ForEach(z =>
                 {
-                    sb.Append($"<td>{p}</td>");
+                    sb.Append($"<td>{z}</td>");
                 });
 
                 sb.Append("</tr>");
