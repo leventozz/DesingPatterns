@@ -1,6 +1,7 @@
 ﻿using BaseProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Observer.Models;
 
 namespace BaseProject.Controllers
 {
@@ -36,6 +37,29 @@ namespace BaseProject.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignUp(UserCreateViewModel userCreateViewModel)
+        {
+            var appuser = new AppUser { UserName = userCreateViewModel.Email, Email = userCreateViewModel.Email };
+            var result = await _userManager.CreateAsync(appuser, userCreateViewModel.Password);
+
+            if (result.Succeeded)
+            {
+                ViewBag.message = "Create User Succeeded";
+            }
+            else
+            {
+                ViewBag.message = result.Errors.ToList().First().Description;
+            }
+
+            return View();
         }
     }
 }
