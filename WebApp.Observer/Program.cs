@@ -1,6 +1,7 @@
 using BaseProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Observer.Observer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>  options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.User.RequireUniqueEmail = true).AddEntityFrameworkStores<AppIdentityDbContext>();
+builder.Services.AddSingleton<UserObserverSubject>(sp =>
+{
+    UserObserverSubject userObserverSubject = new();
+    userObserverSubject.RegisterObserver(new UserObserverWriteToConsole(sp));
+    userObserverSubject.RegisterObserver(new UserObserverCreateDiscount(sp));
+    userObserverSubject.RegisterObserver(new UserObserverSendEMail(sp));
+
+    return userObserverSubject;
+});
 
 var app = builder.Build();
 

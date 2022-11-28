@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Observer.Models;
+using WebApp.Observer.Observer;
 
 namespace BaseProject.Controllers
 {
@@ -9,10 +10,12 @@ namespace BaseProject.Controllers
     { 
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly UserObserverSubject _userObserverSubject;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, UserObserverSubject userObserverSubject)
         {
             _userManager = userManager;
-            _signInManager = signInManager; ;
+            _signInManager = signInManager;
+            _userObserverSubject = userObserverSubject;
         }
         public IActionResult Login()
         {
@@ -53,6 +56,7 @@ namespace BaseProject.Controllers
             if (result.Succeeded)
             {
                 ViewBag.message = "Create User Succeeded";
+                _userObserverSubject.NotifyObserver(appuser);
             }
             else
             {
